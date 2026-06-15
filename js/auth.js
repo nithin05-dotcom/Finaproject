@@ -8,7 +8,7 @@ function login() {
     return;
   }
 
-  fetch("https://evidence-backend.onrender.com/login", {
+  fetch("https://finaproject-backend.onrender.com/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
