@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Court Panel</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- AUTH CHECK -->
+  <script>
+    if (!sessionStorage.getItem("role")) {
+      window.location.href = "index.html";
+    }
+  </script>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <h2>Court Panel</h2>
+  <a href="court.html">Dashboard</a>
+  <a href="#" onclick="logout()">Logout</a>
+</div>
+
+<!-- MAIN CONTENT (CENTERED & CLEAN) -->
+<div class="main" style="display:flex; justify-content:center;">
+  <div class="card" style="width:100%; max-width:1100px;">
+
+    <h2>Court Evidence Review</h2>
+    <p>
+      Review submitted digital evidence, verify authenticity, and take judicial action.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Case ID</th>
+          <th>Evidence</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="caseTable">
+        <tr>
+          <td colspan="4">Loading cases...</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<script src="js/court.js"></script>
+
+<script>
+  function logout() {
+    sessionStorage.clear();
+    window.location.href = "index.html";
+  }
+</script>
+
+</body>
+</html>

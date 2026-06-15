@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Evidence</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- AUTH CHECK (DO NOT TOUCH) -->
+  <script>
+    if (!sessionStorage.getItem("role")) {
+      window.location.href = "index.html";
+    }
+  </script>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <h2>Police Panel</h2>
+  <a href="police.html">Dashboard</a>
+  <a href="upload.html">Upload Evidence</a>
+  <a href="#" onclick="logout()">Logout</a>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <div class="card">
+    <h2>Upload Evidence</h2>
+    <p>Please enter the case ID and select the evidence file.</p>
+
+    <label>Case ID</label>
+    <input type="text" id="caseId" placeholder="Enter Case ID">
+
+    <label>Select Evidence File</label>
+    <input type="file" id="file">
+
+    <button class="btn-upload" type="button" onclick="uploadEvidence()">
+      Upload Evidence
+    </button>
+  </div>
+</div>
+
+<script src="js/upload.js"></script>
+
+<script>
+  function logout() {
+    sessionStorage.clear();
+    window.location.href = "index.html";
+  }
+</script>
+
+</body>
+</html>

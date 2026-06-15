@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Police Panel</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- AUTH CHECK -->
+  <script>
+    if (!sessionStorage.getItem("role")) {
+      window.location.href = "index.html";
+    }
+  </script>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <h2>Police Panel</h2>
+  <a href="police.html">Dashboard</a>
+  <a href="upload.html">Upload Evidence</a>
+  <a href="#" onclick="logout()">Logout</a>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main" style="display:flex; justify-content:center;">
+  <div class="card" style="width:100%; max-width:1100px;">
+
+    <h2>Police Dashboard</h2>
+    <p>
+      Manage case evidence securely and monitor court decisions in real time.
+    </p>
+
+    <!-- STATUS OVERVIEW -->
+    <div style="display:flex; gap:20px; margin:20px 0;">
+      <div class="card" style="flex:1; text-align:center;">
+        <h3>Total Cases</h3>
+        <p id="totalCases">0</p>
+      </div>
+
+      <div class="card" style="flex:1; text-align:center;">
+        <h3>Pending</h3>
+        <p id="pendingCases">0</p>
+      </div>
+
+      <div class="card" style="flex:1; text-align:center;">
+        <h3>Approved</h3>
+        <p id="approvedCases">0</p>
+      </div>
+
+      <div class="card" style="flex:1; text-align:center;">
+        <h3>Rejected</h3>
+        <p id="rejectedCases">0</p>
+      </div>
+    </div>
+
+    <!-- CASE TABLE -->
+    <h3>Case Status Overview</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Case ID</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="statusTable">
+        <tr>
+          <td colspan="2">Loading cases...</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <br>
+
+    <button class="btn-upload" onclick="window.location.href='upload.html'" type="button">
+      + Upload New Evidence
+    </button>
+
+  </div>
+</div>
+
+<script>
+  function logout() {
+    sessionStorage.clear();
+    window.location.href = "index.html";
+  }
+
+  // Backend helper - use local backend like Court Dashboard
+  const BACKEND_ORIGIN = "http://127.0.0.1:5000";
+  function backendUrl(path) {
+    try {
+      if (window.location.protocol === "file:") return BACKEND_ORIGIN + path;
+      if (window.location.origin !== BACKEND_ORIGIN) return BACKEND_ORIGIN + path;
+    } catch (e) {
+      return BACKEND_ORIGIN + path;
+    }
+    return path;
+  }
+
+  // ✅ FETCH CASE DATA FROM LOCAL BACKEND (SAME AS COURT DASHBOARD)
+  fetch(backendUrl("/cases"))
+    .then(res => {
+      if (!res.ok) throw new Error("Failed to fetch cases");
+      return res.json();
+    })
+    .then(data => {
+      const table = document.getElementById("statusTable");
+
+      let total = 0, pending = 0, approved = 0, rejected = 0;
+      table.innerHTML = "";
+
+      if (!data || data.length === 0) {
+        table.innerHTML =
+          "<tr><td colspan='2'>No cases found</td></tr>";
+        return;
+      }
+
+      data.forEach(c => {
+        total++;
+        if (c.status === "Pending") pending++;
+        if (c.status === "Approved") approved++;
+        if (c.status === "Rejected") rejected++;
+
+        const statusClass = c.status.toLowerCase();
+
+        table.innerHTML += `
+          <tr>
+            <td>${c.caseId}</td>
+            <td>
+              <span class="status ${statusClass}">
+                ${c.status}
+              </span>
+            </td>
+          </tr>
+        `;
+      });
+
+      document.getElementById("totalCases").innerText = total;
+      document.getElementById("pendingCases").innerText = pending;
+      document.getElementById("approvedCases").innerText = approved;
+      document.getElementById("rejectedCases").innerText = rejected;
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById("statusTable").innerHTML =
+        "<tr><td colspan='2'>Failed to load cases</td></tr>";
+    });
+</script>
+
+</body>
+</html>

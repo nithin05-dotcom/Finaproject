@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Secure Evidence System</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="main" style="
+  margin-left:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+">
+  <div class="card" style="width:380px;">
+    <h2 style="text-align:center;">Secure Evidence System</h2>
+    <p style="text-align:center;">Police & Court Login Portal</p>
+
+    <label>Role</label>
+    <select id="role">
+      <option value="">Select Role</option>
+      <option value="police">Police</option>
+      <option value="court">Court</option>
+    </select>
+
+    <label>Email</label>
+    <input type="text" id="email" placeholder="police@gmail.com">
+
+    <label>Password</label>
+    <input type="password" id="password" placeholder="police123">
+
+    <button class="btn-upload" style="width:100%;margin-top:10px;"
+      onclick="login()">
+      Login
+    </button>
+  </div>
+</div>
+
+<script>
+function login() {
+  const role = document.getElementById("role").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  if (!role || !email || !password) {
+    alert("Fill all fields");
+    return;
+  }
+
+  fetch("https://evidence-backend.onrender.com/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ role, email, password })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Invalid credentials");
+    return res.json();
+  })
+  .then(data => {
+    sessionStorage.setItem("role", data.role);
+
+    if (data.role === "police") {
+      window.location.href = "police.html";
+    } else {
+      window.location.href = "court.html";
+    }
+  })
+  .catch(err => alert(err.message));
+}
+</script>
+
+</body>
+</html>
