@@ -93,11 +93,12 @@
     return BACKEND_ORIGIN + path;
   }
 
-  // ✅ FETCH CASE DATA FROM LOCAL BACKEND (SAME AS COURT DASHBOARD)
+  // ✅ FETCH CASE DATA FROM RENDER BACKEND
   fetch(backendUrl("/cases"))
-    .then(res => {
-      if (!res.ok) throw new Error("Failed to fetch cases");
-      return res.json();
+    .then(async res => {
+      const text = await res.text();
+      if (!res.ok) throw new Error(text || "Failed to fetch cases");
+      return JSON.parse(text || "[]");
     })
     .then(data => {
       const table = document.getElementById("statusTable");
@@ -137,9 +138,12 @@
       document.getElementById("rejectedCases").innerText = rejected;
     })
     .catch(err => {
-      console.error(err);
-      document.getElementById("statusTable").innerHTML =
-        "<tr><td colspan='2'>Failed to load cases</td></tr>";
+      console.error("Police dashboard error:", err);
+      const table = document.getElementById("statusTable");
+      if (table) {
+        table.innerHTML =
+          "<tr><td colspan='2'>Failed to load cases</td></tr>";
+      }
     });
 </script>
 
