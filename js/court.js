@@ -1,12 +1,7 @@
-const BACKEND_ORIGIN = "http://127.0.0.1:5000"; // backend default port from server.js
+const BACKEND_ORIGIN = "https://finaproject-backend.onrender.com";
+
 function backendUrl(path) {
-  try {
-    if (window.location.protocol === "file:") return BACKEND_ORIGIN + path;
-    if (window.location.origin !== BACKEND_ORIGIN) return BACKEND_ORIGIN + path;
-  } catch (e) {
-    return BACKEND_ORIGIN + path;
-  }
-  return path;
+  return BACKEND_ORIGIN + path;
 }
 
 function loadCases() {
@@ -83,93 +78,3 @@ function loadCases() {
 }
 
 loadCases();
-
-/* ---------- UPDATE STATUS ---------- */
-function updateStatus(caseId, status) {
-  console.log("Updating case status", { caseId, status });
-  const url = backendUrl("/update-status");
-  console.log("Update status - POST", { url, caseId, status });
-
-  fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ caseId, status })
-  })
-    .then(async res => {
-      const text = await res.text();
-      console.log("Update status response", { status: res.status, body: text });
-
-      if (!res.ok) {
-        let message = text || "Failed to update status.";
-        try {
-          const json = JSON.parse(text || "{}");
-          message = json.message || json.error || message;
-        } catch (e) {
-          // ignore parse error
-        }
-        throw new Error(message);
-      }
-
-      let json = {};
-      try {
-        json = JSON.parse(text || "{}");
-      } catch (e) {
-        console.warn("Update status response is not valid JSON", e);
-      }
-
-      alert(json.message || "Status updated successfully.");
-      location.reload();
-    })
-    .catch(err => {
-      console.error("Update status error", err);
-      alert("Could not update status: " + err.message);
-    });
-}
-
-/* ---------- CLEAR CASE ---------- */
-async function clearCase(caseId) {
-  if (!confirm("Are you sure you want to clear this case?")) return;
-
-  console.log("Clearing case", { caseId });
-  const url = backendUrl("/case/delete");
-  console.log("Clearing case - POST", { url, caseId });
-  const body = JSON.stringify({ caseId });
-
-  try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body
-    });
-
-    const text = await res.text();
-    console.log("Clear case response", { url, status: res.status, body: text });
-
-    if (!res.ok) {
-      let message = text || "Failed to clear the case.";
-      try {
-        const json = JSON.parse(text || "{}");
-        message = json.message || json.error || message;
-      } catch (e) {
-        // ignore parse error
-      }
-      throw new Error(message);
-    }
-
-    let json = {};
-    try {
-      json = JSON.parse(text || "{}");
-    } catch (e) {
-      console.warn("Clear case response is not valid JSON", e);
-    }
-
-    alert(json.message || "Case cleared successfully.");
-    location.reload();
-  } catch (err) {
-    console.error("Clear case error", err);
-     alert("Could not clear the case: " + err.message + "\nRequest URL: " + url);
-  }
-}
-

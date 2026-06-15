@@ -1,12 +1,7 @@
-const BACKEND_ORIGIN = "http://127.0.0.1:5000";
+const BACKEND_ORIGIN = "https://finaproject-backend.onrender.com";
+
 function backendUrl(path) {
-  try {
-    if (window.location.protocol === "file:") return BACKEND_ORIGIN + path;
-    if (window.location.origin !== BACKEND_ORIGIN) return BACKEND_ORIGIN + path;
-  } catch (e) {
-    return BACKEND_ORIGIN + path;
-  }
-  return path;
+  return BACKEND_ORIGIN + path;
 }
 
 fetch(backendUrl("/cases"))
@@ -23,4 +18,7 @@ fetch(backendUrl("/cases"))
         </tr>
       `;
     });
+  })
+  .catch(err => {
+    console.error("Error loading cases:", err);
   });

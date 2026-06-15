@@ -1,12 +1,7 @@
-const BACKEND_ORIGIN = "http://127.0.0.1:5000"; // Match Court Panel backend
+const BACKEND_ORIGIN = "https://finaproject-backend.onrender.com";
+
 function backendUrl(path) {
-  try {
-    if (window.location.protocol === "file:") return BACKEND_ORIGIN + path;
-    if (window.location.origin !== BACKEND_ORIGIN) return BACKEND_ORIGIN + path;
-  } catch (e) {
-    return BACKEND_ORIGIN + path;
-  }
-  return path;
+  return BACKEND_ORIGIN + path;
 }
 
 function uploadEvidence() {
@@ -33,20 +28,27 @@ function uploadEvidence() {
   })
     .then(async res => {
       const text = await res.text();
-      console.log("Upload response", { status: res.status, statusText: res.statusText, body: text });
+      console.log("Upload response", {
+        status: res.status,
+        statusText: res.statusText,
+        body: text
+      });
 
       if (!res.ok) {
         let message = "Upload failed.";
+
         try {
           const json = JSON.parse(text || "{}");
           message = json.message || json.error || message;
         } catch (e) {
           if (text) message = text;
         }
+
         throw new Error(message);
       }
 
       let data = {};
+
       try {
         data = JSON.parse(text || "{}");
       } catch (e) {
@@ -62,8 +64,8 @@ function uploadEvidence() {
       document.getElementById("caseId").value = "";
       document.getElementById("file").value = "";
 
-      // Redirect to Court Panel to see the newly uploaded case
       console.log("Redirecting to Court Panel...");
+
       setTimeout(() => {
         window.location.href = "court.html";
       }, 500);
